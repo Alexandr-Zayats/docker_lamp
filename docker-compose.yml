@@ -1,0 +1,31 @@
+version: '2'
+services:
+     db:
+        image: mysql
+        volumes:
+            - "database:/var/lib/mysql"
+        environment:
+            MYSQL_ROOT_PASSWORD: "${MYSQL_ROOT_PASSWORD}"
+            MYSQL_DATABASE: "${BRANCH}"
+            MYSQL_USER: "drakeroll_${BRANCH}"
+            MYSQL_PASSWORD: "${MYSQL_PASSWORD}"
+    php:
+        image: zayats/php:1.0
+        environment:
+            MYSQL_HOST: "db"
+            MYSQL_ROOT_PASSWORD: "${MYSQL_ROOT_PASSWORD}"
+            MYSQL_DATABASE: "${BRANCH}"
+            MYSQL_USER: "drakeroll_${BRANCH}"
+            MYSQL_PASSWORD: "${MYSQL_PASSWORD}"
+        links:
+            - db
+    nginx:
+        image: zayats/nginx:1.0
+        labels:
+            traefik.port: 80
+        volumes:
+            - "/var/www/rodnik:/var/www/html"
+        links:
+            - php
+volumes:
+    database
